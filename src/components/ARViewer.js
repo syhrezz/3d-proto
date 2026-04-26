@@ -93,6 +93,13 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     };
     arOverlay.appendChild(removeBtn);
 
+    arOverlay.addEventListener('beforexrselect', (ev) => {
+        // Prevent WebXR from firing 'select' if the user tapped the Remove button
+        if (ev.target === removeBtn) {
+            ev.preventDefault();
+        }
+    });
+
     // Setup AR Button
     const arButton = ARButton.createButton(renderer, {
       requiredFeatures: ["hit-test"],
@@ -207,6 +214,8 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
             if(child.userData && child.userData.isPreview) {
                 child.rotation.y += 0.005;
                 child.visible = true;
+            } else if (child === placedModel) {
+                child.visible = false;
             }
          });
          removeBtn.style.display = "none";
