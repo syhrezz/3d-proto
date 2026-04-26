@@ -19,18 +19,30 @@ export default function Catalog() {
       <div className="max-w-7xl mx-auto">
         
         {/* Hero Banner */}
-        <div className="relative w-full rounded-3xl overflow-hidden mb-12 h-[300px] md:h-[400px] bg-slate-900 flex items-center">
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent z-10"></div>
-          {/* Using a placeholder background or one of the product images */}
-          <img src={process.env.PUBLIC_URL + '/armchair.png'} alt="Spring Sale" className="absolute right-0 top-0 h-full w-2/3 md:w-1/2 object-cover opacity-50 mix-blend-screen" />
+        <div className="relative w-full rounded-3xl overflow-hidden mb-12 min-h-[380px] md:h-[450px] bg-slate-900 flex items-center">
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/70 to-transparent z-10"></div>
           
-          <div className="relative z-20 px-8 md:px-16 max-w-2xl">
-            <span className="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 font-semibold text-sm rounded-full mb-4 border border-emerald-500/30">Spring Collection</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">Elevate your living space.</h1>
-            <p className="text-slate-300 text-lg mb-8 max-w-md">Discover premium furniture designed for modern comfort. Get up to 20% off on selected items.</p>
-            <button className="px-8 py-3.5 bg-white text-slate-900 font-semibold rounded-xl hover:bg-slate-100 transition-colors">
-              Shop the Sale
-            </button>
+          <img 
+            src={process.env.PUBLIC_URL + '/armchair.png'} 
+            alt="Spring Sale" 
+            className="absolute right-0 top-0 h-full w-full md:w-1/2 object-cover md:object-contain opacity-40 md:opacity-100 mix-blend-lighten md:mix-blend-normal transition-opacity duration-700" 
+          />
+          
+          <div className="relative z-20 px-6 md:px-16 py-12 max-w-2xl">
+            <span className="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 font-semibold text-[10px] md:text-sm rounded-full mb-4 border border-emerald-500/30 uppercase tracking-widest">
+              Spring Collection 2024
+            </span>
+            <h1 className="text-3xl md:text-6xl font-bold text-white mb-4 leading-[1.1]">
+              Elevate your <br className="hidden md:block" /> living space.
+            </h1>
+            <p className="text-slate-300 text-sm md:text-lg mb-8 max-w-xs md:max-w-md leading-relaxed">
+              Discover premium furniture designed for modern comfort. Get up to <span className="text-white font-bold">20% off</span> on selected items this week.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <button className="px-6 md:px-8 py-3 md:py-3.5 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-100 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-white/10">
+                Shop the Sale
+              </button>
+            </div>
           </div>
         </div>
 
