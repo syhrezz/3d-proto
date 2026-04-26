@@ -21,6 +21,7 @@ export default function ProductDetail() {
     const p = products.find(p => p.id === id);
     setProduct(p);
     setQty(1);
+    window.scrollTo(0, 0);
   }, [id]);
 
   const handleAddToCart = () => {
