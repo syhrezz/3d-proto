@@ -93,9 +93,31 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     };
     arOverlay.appendChild(removeBtn);
 
+    const exitBtn = document.createElement("button");
+    exitBtn.innerText = "✕";
+    exitBtn.style.position = "absolute";
+    exitBtn.style.top = "30px";
+    exitBtn.style.right = "20px";
+    exitBtn.style.width = "40px";
+    exitBtn.style.height = "40px";
+    exitBtn.style.background = "rgba(0, 0, 0, 0.5)";
+    exitBtn.style.color = "white";
+    exitBtn.style.border = "none";
+    exitBtn.style.borderRadius = "50%";
+    exitBtn.style.fontSize = "20px";
+    exitBtn.style.display = "flex";
+    exitBtn.style.alignItems = "center";
+    exitBtn.style.justifyContent = "center";
+    exitBtn.style.pointerEvents = "auto";
+    exitBtn.style.cursor = "pointer";
+    exitBtn.onclick = () => {
+      renderer.xr.getSession().end();
+    };
+    arOverlay.appendChild(exitBtn);
+
     arOverlay.addEventListener('beforexrselect', (ev) => {
-        // Prevent WebXR from firing 'select' if the user tapped the Remove button
-        if (ev.target === removeBtn) {
+        // Prevent WebXR from firing 'select' if the user tapped the UI buttons
+        if (ev.target === removeBtn || ev.target === exitBtn) {
             ev.preventDefault();
         }
     });
