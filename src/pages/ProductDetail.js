@@ -23,11 +23,11 @@ export default function ProductDetail() {
   if (!product) return <div className="min-h-screen flex items-center justify-center font-medium text-slate-500">Loading Product...</div>;
 
   return (
-    <main className="pt-32 pb-20 px-6 max-w-7xl mx-auto min-h-screen">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+    <main className="pt-24 md:pt-32 pb-20 px-4 md:px-6 max-w-7xl mx-auto min-h-screen">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20">
         
         {/* Left: 3D AR Viewer */}
-        <div className="relative w-full rounded-3xl bg-gradient-to-br from-white to-slate-100 overflow-hidden border border-slate-200 shadow-sm flex items-center justify-center min-h-[500px]">
+        <div className="relative w-full rounded-2xl md:rounded-3xl bg-gradient-to-br from-white to-slate-100 overflow-hidden border border-slate-200 shadow-sm flex items-center justify-center aspect-[4/5] md:aspect-auto md:min-h-[500px]">
           {/* Badges */}
           <div className="absolute top-6 left-6 z-10 flex flex-col gap-3 pointer-events-none">
             <span className="bg-white/80 backdrop-blur-md text-slate-800 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-white/50 shadow-sm w-fit">
@@ -41,7 +41,7 @@ export default function ProductDetail() {
 
         {/* Right: Details */}
         <div className="flex flex-col justify-center">
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-6 font-medium">
+          <div className="flex items-center gap-2 text-xs text-slate-500 mb-4 md:mb-6 font-medium">
             <Link to="/" className="hover:text-slate-900">Catalog</Link>
             <span>/</span>
             <span className="hover:text-slate-900">{product.category}</span>
@@ -49,10 +49,10 @@ export default function ProductDetail() {
             <span className="text-slate-900">{product.name}</span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">{product.name}</h1>
+          <h1 className="text-3xl md:text-5xl font-bold text-slate-900 mb-3 md:mb-4 leading-tight">{product.name}</h1>
           
           {/* Reviews & SKU */}
-          <div className="flex items-center gap-6 mb-6">
+          <div className="flex items-center gap-4 md:gap-6 mb-6">
             <div className="flex items-center gap-1">
               <div className="flex text-amber-400">
                 <i data-lucide="star" className="w-4 h-4 fill-current"></i>
@@ -68,8 +68,8 @@ export default function ProductDetail() {
           </div>
 
           {/* Price */}
-          <div className="flex items-end gap-3 mb-8">
-            <span className="text-3xl font-bold text-slate-900">Rp {product.price.toLocaleString('id-ID')}</span>
+          <div className="flex items-end gap-3 mb-6 md:mb-8">
+            <span className="text-2xl md:text-3xl font-bold text-slate-900">Rp {product.price.toLocaleString('id-ID')}</span>
             {product.oldPrice && (
               <>
                 <span className="text-sm text-slate-500 line-through mb-1">Rp {product.oldPrice.toLocaleString('id-ID')}</span>

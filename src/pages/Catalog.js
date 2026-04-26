@@ -4,11 +4,11 @@ import { products } from '../data/products';
 
 export default function Catalog() {
   return (
-    <div className="min-h-screen bg-slate-50 pt-32 pb-16 px-6">
+    <div className="min-h-screen bg-slate-50 pt-24 md:pt-32 pb-16 px-4 md:px-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-end mb-12">
+        <div className="flex justify-between items-end mb-8 md:mb-12">
           <div>
-            <h1 className="text-4xl font-bold text-slate-900 mb-2">Our Collection</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Our Collection</h1>
             <p className="text-slate-500">Discover premium furniture crafted for modern living.</p>
           </div>
           <div className="hidden md:flex gap-4">
