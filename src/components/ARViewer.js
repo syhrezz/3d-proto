@@ -15,6 +15,8 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     let hitTestSource = null;
     let hitTestSourceRequested = false;
     let modelToPlace = null;
+    let placedModel = null;
+    let accumulatedRotationY = 0;
 
     // 1. Setup Scene & Camera
     scene = new THREE.Scene();
@@ -56,10 +58,46 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
       scene.environment = null;
     });
 
-    // 4. Setup AR Button
+    // 4. Setup Custom AR DOM Overlay for UI
+    const arOverlay = document.createElement("div");
+    arOverlay.id = "ar-overlay";
+    arOverlay.style.position = "absolute";
+    arOverlay.style.top = "0";
+    arOverlay.style.left = "0";
+    arOverlay.style.width = "100%";
+    arOverlay.style.height = "100%";
+    arOverlay.style.pointerEvents = "none";
+    document.body.appendChild(arOverlay);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.innerText = "Remove Product";
+    removeBtn.style.position = "absolute";
+    removeBtn.style.bottom = "40px";
+    removeBtn.style.left = "50%";
+    removeBtn.style.transform = "translateX(-50%)";
+    removeBtn.style.padding = "12px 24px";
+    removeBtn.style.background = "rgba(239, 68, 68, 0.9)"; // Red-500
+    removeBtn.style.color = "white";
+    removeBtn.style.border = "none";
+    removeBtn.style.borderRadius = "30px";
+    removeBtn.style.fontFamily = "Poppins, sans-serif";
+    removeBtn.style.fontWeight = "600";
+    removeBtn.style.boxShadow = "0 4px 15px rgba(0,0,0,0.2)";
+    removeBtn.style.pointerEvents = "auto";
+    removeBtn.style.display = "none";
+    removeBtn.onclick = () => {
+       if (placedModel) {
+           placedModel.visible = false;
+           removeBtn.style.display = "none";
+       }
+    };
+    arOverlay.appendChild(removeBtn);
+
+    // Setup AR Button
     const arButton = ARButton.createButton(renderer, {
       requiredFeatures: ["hit-test"],
-      optionalFeatures: ["light-estimation"],
+      optionalFeatures: ["dom-overlay", "light-estimation"],
+      domOverlay: { root: arOverlay }
     });
     arButton.id = "ARButton";
     arButton.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='display:inline;margin-right:8px;'><rect x='5' y='2' width='14' height='20' rx='2' ry='2'></rect><line x1='12' y1='18' x2='12.01' y2='18'></line></svg> View in AR";
@@ -95,22 +133,69 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     reticle.visible = false;
     scene.add(reticle);
 
+    // Touch events for rotating the model
+    let touchDownX = 0;
+    let isTouching = false;
+    let totalDeltaX = 0;
+
+    const onTouchStart = (e) => {
+        if (e.touches.length > 0) {
+            touchDownX = e.touches[0].pageX;
+            isTouching = true;
+            totalDeltaX = 0;
+        }
+    };
+    
+    const onTouchMove = (e) => {
+        if (!isTouching) return;
+        const touchX = e.touches[0].pageX;
+        const deltaX = touchX - touchDownX;
+        totalDeltaX += Math.abs(deltaX);
+        
+        if (placedModel && placedModel.visible) {
+            placedModel.rotation.y += deltaX * 0.01;
+            accumulatedRotationY += deltaX * 0.01;
+        }
+        touchDownX = touchX;
+    };
+    
+    const onTouchEnd = () => {
+        isTouching = false;
+    };
+    
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+
     function onSelect() {
+      // Ignore placement/movement if the user was actively dragging to rotate
+      if (totalDeltaX > 10) return;
+
       if (reticle.visible && modelToPlace) {
         // Hide preview model in AR
         scene.children.forEach(child => {
             if(child.userData && child.userData.isPreview) child.visible = false;
         });
 
-        const newModel = modelToPlace.clone();
-        newModel.visible = true;
-        reticle.matrix.decompose(
-          newModel.position,
-          newModel.quaternion,
-          newModel.scale
-        );
-        newModel.scale.set(scaleFactor, scaleFactor, scaleFactor);
-        scene.add(newModel);
+        if (!placedModel) {
+            placedModel = modelToPlace.clone();
+            scene.add(placedModel);
+        }
+        
+        placedModel.visible = true;
+        
+        const position = new THREE.Vector3();
+        const quaternion = new THREE.Quaternion();
+        const scale = new THREE.Vector3();
+        reticle.matrix.decompose(position, quaternion, scale);
+        
+        placedModel.position.copy(position);
+        placedModel.quaternion.copy(quaternion);
+        // Apply user's custom rotation on top of the floor's normal rotation
+        placedModel.rotateY(accumulatedRotationY);
+        placedModel.scale.set(scaleFactor, scaleFactor, scaleFactor);
+        
+        removeBtn.style.display = "block";
       }
     }
 
@@ -124,13 +209,7 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
                 child.visible = true;
             }
          });
-      } else {
-         // In AR session, hide preview
-         scene.children.forEach(child => {
-            if(child.userData && child.userData.isPreview) {
-                child.visible = false;
-            }
-         });
+         removeBtn.style.display = "none";
       }
 
       if (frame) {
@@ -185,6 +264,9 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
 
     // 8. Cleanup on Unmount
     return () => {
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
       window.removeEventListener('resize', handleResize);
       renderer.setAnimationLoop(null);
       if (currentContainer && renderer.domElement) {
@@ -192,6 +274,9 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
       }
       if (currentContainer && currentContainer.contains(arButton)) {
         currentContainer.removeChild(arButton);
+      }
+      if (document.body.contains(arOverlay)) {
+        document.body.removeChild(arOverlay);
       }
       renderer.dispose();
       
