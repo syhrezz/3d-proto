@@ -2,17 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { products } from '../data/products';
 import ARViewer from '../components/ARViewer';
+import { useCart } from '../context/CartContext';
 
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [qty, setQty] = useState(1);
+  const { addToCart } = useCart();
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     if (window.lucide) {
       window.lucide.createIcons();
     }
-  }, [product]);
+  }, [product, showToast]);
 
   useEffect(() => {
     const p = products.find(p => p.id === id);
@@ -20,10 +23,25 @@ export default function ProductDetail() {
     setQty(1);
   }, [id]);
 
+  const handleAddToCart = () => {
+    addToCart({ ...product, quantity: qty });
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
   if (!product) return <div className="min-h-screen flex items-center justify-center font-medium text-slate-500">Loading Product...</div>;
 
   return (
-    <main className="pt-24 md:pt-32 pb-20 px-4 md:px-6 max-w-7xl mx-auto min-h-screen">
+    <main className="pt-24 md:pt-32 pb-20 px-4 md:px-6 max-w-7xl mx-auto min-h-screen relative">
+      {/* Toast Notification */}
+      <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 transition-all duration-300 z-50 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'}`}>
+        <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+          <i data-lucide="check" className="w-4 h-4 text-white stroke-[3]"></i>
+        </div>
+        <span className="font-medium text-sm">Added to your cart</span>
+        <Link to="/cart" className="ml-2 text-emerald-400 hover:text-emerald-300 text-sm font-bold transition-colors">View Cart</Link>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20">
         
         {/* Left: 3D AR Viewer */}
@@ -98,7 +116,7 @@ export default function ProductDetail() {
               <button onClick={() => setQty(Math.min(10, qty + 1))} className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-slate-900"><i data-lucide="plus" className="w-4 h-4"></i></button>
             </div>
             
-            <button className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl flex items-center justify-center gap-2 shadow-lg transition-colors">
+            <button onClick={handleAddToCart} className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl flex items-center justify-center gap-2 shadow-lg transition-colors">
               <i data-lucide="shopping-bag" className="w-5 h-5"></i>
               Add to Cart
             </button>

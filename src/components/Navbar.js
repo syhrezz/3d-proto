@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 
 export default function Navbar() {
+  const { cartCount } = useCart();
+
   useEffect(() => {
     if (window.lucide) {
       window.lucide.createIcons();
@@ -23,10 +26,12 @@ export default function Navbar() {
           <div className="flex items-center gap-5 text-slate-600">
               <button className="hover:text-slate-900 transition-colors"><i data-lucide="search" className="w-5 h-5"></i></button>
               <button className="hover:text-slate-900 transition-colors"><i data-lucide="heart" className="w-5 h-5"></i></button>
-              <button className="hover:text-slate-900 transition-colors relative">
+              <Link to="/cart" className="hover:text-slate-900 transition-colors relative">
                   <i data-lucide="shopping-bag" className="w-5 h-5"></i>
-                  <span className="absolute -top-1.5 -right-1.5 bg-slate-900 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">0</span>
-              </button>
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 bg-slate-900 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">{cartCount}</span>
+                  )}
+              </Link>
           </div>
       </div>
     </nav>
