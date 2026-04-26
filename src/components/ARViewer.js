@@ -4,12 +4,15 @@ import { ARButton } from "three/examples/jsm/webxr/ARButton";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { XREstimatedLight } from "three/examples/jsm/webxr/XREstimatedLight";
 
-export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
+export default function ARViewer({ modelUrl, usdzUrl, scaleFactor = 0.01 }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
     const currentContainer = containerRef.current;
     if (!currentContainer) return;
+
+    // Detect iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     let scene, camera, renderer, reticle, controller;
     let hitTestSource = null;
@@ -116,59 +119,85 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     arOverlay.appendChild(exitBtn);
 
     arOverlay.addEventListener('beforexrselect', (ev) => {
-      // Prevent WebXR from firing 'select' if the user tapped the UI buttons
       if (ev.target === removeBtn || ev.target === exitBtn) {
         ev.preventDefault();
       }
     });
 
-    // Setup AR Button
-    const arButton = ARButton.createButton(renderer, {
-      requiredFeatures: ["hit-test"],
-      optionalFeatures: ["dom-overlay", "light-estimation"],
-      domOverlay: { root: arOverlay }
-    });
+    // 5. Setup AR Activation Button (WebXR for Android, Quick Look for iOS)
+    let arButton;
+
+    if (isIOS) {
+      // Create Custom Button for iOS AR Quick Look
+      arButton = document.createElement("a");
+      arButton.rel = "ar";
+      arButton.href = usdzUrl || modelUrl.replace(".glb", ".usdz");
+      arButton.id = "ARButton";
+      arButton.style.position = "absolute";
+      arButton.style.bottom = "20px";
+      arButton.style.left = "calc(50% - 80px)";
+      arButton.style.width = "160px";
+      arButton.style.height = "40px";
+      arButton.style.display = "flex";
+      arButton.style.alignItems = "center";
+      arButton.style.justifyContent = "center";
+      arButton.style.background = "#fff";
+      arButton.style.color = "#000";
+      arButton.style.border = "1px solid #ccc";
+      arButton.style.borderRadius = "10px";
+      arButton.style.fontFamily = "Poppins, sans-serif";
+      arButton.style.fontSize = "13px";
+      arButton.style.fontWeight = "bold";
+      arButton.style.textDecoration = "none";
+      arButton.style.cursor = "pointer";
+      arButton.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='display:inline;margin-right:8px;'><rect x='5' y='2' width='14' height='20' rx='2' ry='2'></rect><line x1='12' y1='18' x2='12.01' y2='18'></line></svg> View in AR";
+      
+      // AR Quick Look sometimes requires an img inside the link for some versions of Safari
+      const img = document.createElement("img");
+      img.src = ""; // Transparent or icon
+      img.style.display = "none";
+      arButton.appendChild(img);
+    } else {
+      // Standard WebXR Button for Android/Desktop
+      arButton = ARButton.createButton(renderer, {
+        requiredFeatures: ["hit-test"],
+        optionalFeatures: ["dom-overlay", "light-estimation"],
+        domOverlay: { root: arOverlay }
+      });
+      arButton.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='display:inline;margin-right:8px;'><rect x='5' y='2' width='14' height='20' rx='2' ry='2'></rect><line x1='12' y1='18' x2='12.01' y2='18'></line></svg> View in AR";
+    }
+
     arButton.id = "ARButton";
-    arButton.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='display:inline;margin-right:8px;'><rect x='5' y='2' width='14' height='20' rx='2' ry='2'></rect><line x1='12' y1='18' x2='12.01' y2='18'></line></svg> View in AR";
     currentContainer.appendChild(arButton);
 
-    // 5. Load the specific model
+    // 6. Load the specific model for 3D Preview
     const loader = new GLTFLoader();
     loader.load(modelUrl, function (glb) {
       modelToPlace = glb.scene;
 
-      // Let's add the model to the center of the scene for 3D preview before AR
       const previewModel = modelToPlace.clone();
-      // Set to a reasonable scale so it fits the screen fully
       previewModel.scale.set(scaleFactor * 1.2, scaleFactor * 1.2, scaleFactor * 1.2);
-      // Move it further back and slightly lower for the best viewing angle
       previewModel.position.set(0, -0.5, -2.5);
-
-      // Add subtle rotation to preview model
       previewModel.userData.isPreview = true;
       scene.add(previewModel);
     });
 
-    // 6. Setup AR Controller & Reticle
+    // 7. Setup AR Controller & Reticle (Only for WebXR)
     controller = renderer.xr.getController(0);
     controller.addEventListener("select", onSelect);
     scene.add(controller);
 
     reticle = new THREE.Group();
-
     const ring = new THREE.Mesh(
       new THREE.RingGeometry(0.1, 0.12, 32).rotateX(-Math.PI / 2),
       new THREE.MeshBasicMaterial({ color: 0xffffff })
     );
-
     const centerSphere = new THREE.Mesh(
       new THREE.SphereGeometry(0.02, 16, 16),
       new THREE.MeshBasicMaterial({ color: 0xffffff })
     );
-
     reticle.add(ring);
     reticle.add(centerSphere);
-
     reticle.matrixAutoUpdate = false;
     reticle.visible = false;
     scene.add(reticle);
@@ -208,11 +237,9 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     window.addEventListener('touchend', onTouchEnd, { passive: true });
 
     function onSelect() {
-      // Ignore placement/movement if the user was actively dragging to rotate
       if (totalDeltaX > 10) return;
 
       if (reticle.visible && modelToPlace) {
-        // Hide preview model in AR
         scene.children.forEach(child => {
           if (child.userData && child.userData.isPreview) child.visible = false;
         });
@@ -231,7 +258,6 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
 
         placedModel.position.copy(position);
         placedModel.quaternion.copy(quaternion);
-        // Apply user's custom rotation on top of the floor's normal rotation
         placedModel.rotateY(accumulatedRotationY);
         placedModel.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
@@ -239,9 +265,8 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
       }
     }
 
-    // 7. Animation Loop
+    // 8. Animation Loop
     function render(timestamp, frame) {
-      // Rotate preview model if not in AR
       if (!renderer.xr.isPresenting) {
         scene.children.forEach(child => {
           if (child.userData && child.userData.isPreview) {
@@ -253,7 +278,6 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
         });
         removeBtn.style.display = "none";
       } else {
-        // In AR session, hide preview models
         scene.children.forEach(child => {
           if (child.userData && child.userData.isPreview) {
             child.visible = false;
@@ -302,7 +326,6 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
 
     renderer.setAnimationLoop(render);
 
-    // Resize handler
     const handleResize = () => {
       if (!currentContainer) return;
       camera.aspect = currentContainer.clientWidth / currentContainer.clientHeight;
@@ -311,7 +334,7 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     };
     window.addEventListener('resize', handleResize);
 
-    // 8. Cleanup on Unmount
+    // 9. Cleanup on Unmount
     return () => {
       window.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('touchmove', onTouchMove);
@@ -349,7 +372,7 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
         }
       });
     };
-  }, [modelUrl, scaleFactor]);
+  }, [modelUrl, usdzUrl, scaleFactor]);
 
   return <div ref={containerRef} className="ar-viewer-container w-full h-full cursor-grab active:cursor-grabbing" />;
 }

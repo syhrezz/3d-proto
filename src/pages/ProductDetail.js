@@ -55,7 +55,11 @@ export default function ProductDetail() {
             </span>
           </div>
           
-          <ARViewer modelUrl={process.env.PUBLIC_URL + product.modelUrl} scaleFactor={product.scaleFactor} />
+          <ARViewer 
+            modelUrl={process.env.PUBLIC_URL + product.modelUrl} 
+            usdzUrl={product.usdzUrl ? process.env.PUBLIC_URL + product.usdzUrl : (process.env.PUBLIC_URL + product.modelUrl).replace(".glb", ".usdz")}
+            scaleFactor={product.scaleFactor} 
+          />
         </div>
 
         {/* Right: Details */}
