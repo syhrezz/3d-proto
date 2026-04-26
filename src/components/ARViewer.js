@@ -132,10 +132,21 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     controller.addEventListener("select", onSelect);
     scene.add(controller);
 
-    reticle = new THREE.Mesh(
-      new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2),
-      new THREE.MeshBasicMaterial()
+    reticle = new THREE.Group();
+    
+    const ring = new THREE.Mesh(
+      new THREE.RingGeometry(0.1, 0.12, 32).rotateX(-Math.PI / 2),
+      new THREE.MeshBasicMaterial({ color: 0xffffff })
     );
+    
+    const centerSphere = new THREE.Mesh(
+      new THREE.SphereGeometry(0.02, 16, 16),
+      new THREE.MeshBasicMaterial({ color: 0xffffff })
+    );
+    
+    reticle.add(ring);
+    reticle.add(centerSphere);
+    
     reticle.matrixAutoUpdate = false;
     reticle.visible = false;
     scene.add(reticle);
@@ -219,6 +230,13 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
             }
          });
          removeBtn.style.display = "none";
+      } else {
+         // In AR session, hide preview models
+         scene.children.forEach(child => {
+            if(child.userData && child.userData.isPreview) {
+                child.visible = false;
+            }
+         });
       }
 
       if (frame) {
