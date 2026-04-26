@@ -13,7 +13,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group">
               <i data-lucide="sofa" className="w-8 h-8 text-slate-800 transition-transform group-hover:-rotate-6"></i>
-              <span className="font-bold text-xl tracking-tight text-slate-900">LUMIÈRE</span>
+              <span className="font-bold text-xl tracking-tight text-slate-900">Bizmate</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
               <Link to="/" className="text-slate-900 transition-colors">Catalog</Link>
