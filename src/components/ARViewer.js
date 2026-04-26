@@ -8,6 +8,9 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
   const containerRef = useRef(null);
   
   useEffect(() => {
+    const currentContainer = containerRef.current;
+    if (!currentContainer) return;
+
     let scene, camera, renderer, reticle, controller;
     let hitTestSource = null;
     let hitTestSourceRequested = false;
@@ -17,7 +20,7 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(
       70,
-      containerRef.current.clientWidth / containerRef.current.clientHeight,
+      currentContainer.clientWidth / currentContainer.clientHeight,
       0.01,
       20
     );
@@ -33,9 +36,9 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
       alpha: true,
     });
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
+    renderer.setSize(currentContainer.clientWidth, currentContainer.clientHeight);
     renderer.xr.enabled = true;
-    containerRef.current.appendChild(renderer.domElement);
+    currentContainer.appendChild(renderer.domElement);
 
     // Estimated Lighting for AR
     const xrLight = new XREstimatedLight(renderer);
@@ -173,10 +176,10 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
 
     // Resize handler
     const handleResize = () => {
-        if (!containerRef.current) return;
-        camera.aspect = containerRef.current.clientWidth / containerRef.current.clientHeight;
+        if (!currentContainer) return;
+        camera.aspect = currentContainer.clientWidth / currentContainer.clientHeight;
         camera.updateProjectionMatrix();
-        renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
+        renderer.setSize(currentContainer.clientWidth, currentContainer.clientHeight);
     };
     window.addEventListener('resize', handleResize);
 
@@ -184,8 +187,8 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     return () => {
       window.removeEventListener('resize', handleResize);
       renderer.setAnimationLoop(null);
-      if (containerRef.current && renderer.domElement) {
-        containerRef.current.removeChild(renderer.domElement);
+      if (currentContainer && renderer.domElement) {
+        currentContainer.removeChild(renderer.domElement);
       }
       if (document.body.contains(arButton)) {
         document.body.removeChild(arButton);
