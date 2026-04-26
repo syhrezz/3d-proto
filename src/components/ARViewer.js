@@ -6,7 +6,7 @@ import { XREstimatedLight } from "three/examples/jsm/webxr/XREstimatedLight";
 
 export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
   const containerRef = useRef(null);
-  
+
   useEffect(() => {
     const currentContainer = containerRef.current;
     if (!currentContainer) return;
@@ -70,7 +70,7 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     document.body.appendChild(arOverlay);
 
     const removeBtn = document.createElement("button");
-    removeBtn.innerText = "Remove Product";
+    removeBtn.innerText = "Remove";
     removeBtn.style.position = "absolute";
     removeBtn.style.bottom = "40px";
     removeBtn.style.left = "50%";
@@ -86,10 +86,10 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     removeBtn.style.pointerEvents = "auto";
     removeBtn.style.display = "none";
     removeBtn.onclick = () => {
-       if (placedModel) {
-           placedModel.visible = false;
-           removeBtn.style.display = "none";
-       }
+      if (placedModel) {
+        placedModel.visible = false;
+        removeBtn.style.display = "none";
+      }
     };
     arOverlay.appendChild(removeBtn);
 
@@ -116,10 +116,10 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     arOverlay.appendChild(exitBtn);
 
     arOverlay.addEventListener('beforexrselect', (ev) => {
-        // Prevent WebXR from firing 'select' if the user tapped the UI buttons
-        if (ev.target === removeBtn || ev.target === exitBtn) {
-            ev.preventDefault();
-        }
+      // Prevent WebXR from firing 'select' if the user tapped the UI buttons
+      if (ev.target === removeBtn || ev.target === exitBtn) {
+        ev.preventDefault();
+      }
     });
 
     // Setup AR Button
@@ -136,14 +136,14 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     const loader = new GLTFLoader();
     loader.load(modelUrl, function (glb) {
       modelToPlace = glb.scene;
-      
+
       // Let's add the model to the center of the scene for 3D preview before AR
       const previewModel = modelToPlace.clone();
       // Set to a reasonable scale so it fits the screen fully
       previewModel.scale.set(scaleFactor * 1.2, scaleFactor * 1.2, scaleFactor * 1.2);
       // Move it further back and slightly lower for the best viewing angle
       previewModel.position.set(0, -0.5, -2.5);
-      
+
       // Add subtle rotation to preview model
       previewModel.userData.isPreview = true;
       scene.add(previewModel);
@@ -155,20 +155,20 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     scene.add(controller);
 
     reticle = new THREE.Group();
-    
+
     const ring = new THREE.Mesh(
       new THREE.RingGeometry(0.1, 0.12, 32).rotateX(-Math.PI / 2),
       new THREE.MeshBasicMaterial({ color: 0xffffff })
     );
-    
+
     const centerSphere = new THREE.Mesh(
       new THREE.SphereGeometry(0.02, 16, 16),
       new THREE.MeshBasicMaterial({ color: 0xffffff })
     );
-    
+
     reticle.add(ring);
     reticle.add(centerSphere);
-    
+
     reticle.matrixAutoUpdate = false;
     reticle.visible = false;
     scene.add(reticle);
@@ -179,30 +179,30 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     let totalDeltaX = 0;
 
     const onTouchStart = (e) => {
-        if (e.touches.length > 0) {
-            touchDownX = e.touches[0].pageX;
-            isTouching = true;
-            totalDeltaX = 0;
-        }
+      if (e.touches.length > 0) {
+        touchDownX = e.touches[0].pageX;
+        isTouching = true;
+        totalDeltaX = 0;
+      }
     };
-    
+
     const onTouchMove = (e) => {
-        if (!isTouching) return;
-        const touchX = e.touches[0].pageX;
-        const deltaX = touchX - touchDownX;
-        totalDeltaX += Math.abs(deltaX);
-        
-        if (placedModel && placedModel.visible) {
-            placedModel.rotation.y += deltaX * 0.01;
-            accumulatedRotationY += deltaX * 0.01;
-        }
-        touchDownX = touchX;
+      if (!isTouching) return;
+      const touchX = e.touches[0].pageX;
+      const deltaX = touchX - touchDownX;
+      totalDeltaX += Math.abs(deltaX);
+
+      if (placedModel && placedModel.visible) {
+        placedModel.rotation.y += deltaX * 0.01;
+        accumulatedRotationY += deltaX * 0.01;
+      }
+      touchDownX = touchX;
     };
-    
+
     const onTouchEnd = () => {
-        isTouching = false;
+      isTouching = false;
     };
-    
+
     window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchmove', onTouchMove, { passive: true });
     window.addEventListener('touchend', onTouchEnd, { passive: true });
@@ -214,27 +214,27 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
       if (reticle.visible && modelToPlace) {
         // Hide preview model in AR
         scene.children.forEach(child => {
-            if(child.userData && child.userData.isPreview) child.visible = false;
+          if (child.userData && child.userData.isPreview) child.visible = false;
         });
 
         if (!placedModel) {
-            placedModel = modelToPlace.clone();
-            scene.add(placedModel);
+          placedModel = modelToPlace.clone();
+          scene.add(placedModel);
         }
-        
+
         placedModel.visible = true;
-        
+
         const position = new THREE.Vector3();
         const quaternion = new THREE.Quaternion();
         const scale = new THREE.Vector3();
         reticle.matrix.decompose(position, quaternion, scale);
-        
+
         placedModel.position.copy(position);
         placedModel.quaternion.copy(quaternion);
         // Apply user's custom rotation on top of the floor's normal rotation
         placedModel.rotateY(accumulatedRotationY);
         placedModel.scale.set(scaleFactor, scaleFactor, scaleFactor);
-        
+
         removeBtn.style.display = "block";
       }
     }
@@ -243,22 +243,22 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
     function render(timestamp, frame) {
       // Rotate preview model if not in AR
       if (!renderer.xr.isPresenting) {
-         scene.children.forEach(child => {
-            if(child.userData && child.userData.isPreview) {
-                child.rotation.y += 0.005;
-                child.visible = true;
-            } else if (child === placedModel) {
-                child.visible = false;
-            }
-         });
-         removeBtn.style.display = "none";
+        scene.children.forEach(child => {
+          if (child.userData && child.userData.isPreview) {
+            child.rotation.y += 0.005;
+            child.visible = true;
+          } else if (child === placedModel) {
+            child.visible = false;
+          }
+        });
+        removeBtn.style.display = "none";
       } else {
-         // In AR session, hide preview models
-         scene.children.forEach(child => {
-            if(child.userData && child.userData.isPreview) {
-                child.visible = false;
-            }
-         });
+        // In AR session, hide preview models
+        scene.children.forEach(child => {
+          if (child.userData && child.userData.isPreview) {
+            child.visible = false;
+          }
+        });
       }
 
       if (frame) {
@@ -299,15 +299,15 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
 
       renderer.render(scene, camera);
     }
-    
+
     renderer.setAnimationLoop(render);
 
     // Resize handler
     const handleResize = () => {
-        if (!currentContainer) return;
-        camera.aspect = currentContainer.clientWidth / currentContainer.clientHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(currentContainer.clientWidth, currentContainer.clientHeight);
+      if (!currentContainer) return;
+      camera.aspect = currentContainer.clientWidth / currentContainer.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(currentContainer.clientWidth, currentContainer.clientHeight);
     };
     window.addEventListener('resize', handleResize);
 
@@ -328,25 +328,25 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
         document.body.removeChild(arOverlay);
       }
       renderer.dispose();
-      
+
       scene.traverse((object) => {
-          if (!object.isMesh) return;
-          if (object.geometry) object.geometry.dispose();
-          if (object.material) {
-              if (object.material.isMaterial) {
-                  for (const key in object.material) {
-                      const value = object.material[key];
-                      if (value && typeof value === 'object' && 'minFilter' in value) {
-                          value.dispose();
-                      }
-                  }
-                  object.material.dispose();
-              } else {
-                  for (const material of object.material) {
-                      material.dispose();
-                  }
+        if (!object.isMesh) return;
+        if (object.geometry) object.geometry.dispose();
+        if (object.material) {
+          if (object.material.isMaterial) {
+            for (const key in object.material) {
+              const value = object.material[key];
+              if (value && typeof value === 'object' && 'minFilter' in value) {
+                value.dispose();
               }
+            }
+            object.material.dispose();
+          } else {
+            for (const material of object.material) {
+              material.dispose();
+            }
           }
+        }
       });
     };
   }, [modelUrl, scaleFactor]);
