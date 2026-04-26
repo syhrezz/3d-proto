@@ -72,9 +72,10 @@ export default function ARViewer({ modelUrl, scaleFactor = 0.01 }) {
       
       // Let's add the model to the center of the scene for 3D preview before AR
       const previewModel = modelToPlace.clone();
-      // Make it slightly larger for the preview
-      previewModel.scale.set(scaleFactor * 2.5, scaleFactor * 2.5, scaleFactor * 2.5);
-      previewModel.position.set(0, -0.2, -1.5);
+      // Set to a reasonable scale so it fits the screen fully
+      previewModel.scale.set(scaleFactor * 1.2, scaleFactor * 1.2, scaleFactor * 1.2);
+      // Move it further back and slightly lower for the best viewing angle
+      previewModel.position.set(0, -0.5, -2.5);
       
       // Add subtle rotation to preview model
       previewModel.userData.isPreview = true;
