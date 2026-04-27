@@ -2,12 +2,17 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { useWishlist } from '../context/WishlistContext';
 
 export default function Navbar() {
   const { cartCount } = useCart();
   const { user, logout } = useAuth();
+  const { wishlistCount } = useWishlist();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef(null);
+  const searchRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,10 +24,22 @@ export default function Navbar() {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false);
       }
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setIsSearchVisible(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/catalog?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+      setIsSearchVisible(false);
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -39,10 +56,37 @@ export default function Navbar() {
           </Link>
 
           <div className="flex items-center gap-5 text-slate-600">
-              <button className="hover:text-slate-900 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              </button>
+              <div className="relative flex items-center" ref={searchRef}>
+                <form onSubmit={handleSearch} className={`flex items-center transition-all duration-300 ${isSearchVisible ? 'w-48 md:w-64 opacity-100' : 'w-0 opacity-0 overflow-hidden'}`}>
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-4 pr-10 py-2 bg-slate-50 border border-slate-200 rounded-full text-sm outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
+                  />
+                  <button type="submit" className="absolute right-3 text-slate-400 hover:text-slate-900 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                  </button>
+                </form>
+                
+                {!isSearchVisible && (
+                  <button 
+                    onClick={() => setIsSearchVisible(true)}
+                    className="hover:text-slate-900 transition-colors p-2"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                  </button>
+                )}
+              </div>
               
+              <Link to="/wishlist" className="hover:text-slate-900 transition-colors relative">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                  {wishlistCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">{wishlistCount}</span>
+                  )}
+              </Link>
+
               <Link to="/cart" className="hover:text-slate-900 transition-colors relative">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
                   {cartCount > 0 && (
@@ -84,14 +128,14 @@ export default function Navbar() {
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 group-hover:text-slate-900"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                           My Orders
                         </Link>
-                        <Link to="/profile" onClick={() => setShowDropdown(false)} className="flex items-center gap-3 py-3 text-[14px] text-slate-700 hover:text-slate-900 border-b border-slate-50 transition-colors group">
+                        <Link to="/wishlist" onClick={() => setShowDropdown(false)} className="flex items-center gap-3 py-3 text-[14px] text-slate-700 hover:text-slate-900 border-b border-slate-50 transition-colors group">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 group-hover:text-slate-900"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
                           Wishlist
                         </Link>
-                        <button className="flex items-center gap-3 py-3 text-[14px] text-slate-700 hover:text-slate-900 border-b border-slate-50 text-left transition-colors group">
+                        <Link to="/returns" onClick={() => setShowDropdown(false)} className="flex items-center gap-3 py-3 text-[14px] text-slate-700 hover:text-slate-900 border-b border-slate-50 transition-colors group">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 group-hover:text-slate-900"><path d="m7 15 5 5 5-5"/><path d="M12 9v11"/><path d="M21 15V4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v11"/></svg>
                           Returns
-                        </button>
+                        </Link>
                       </div>
                     </div>
 

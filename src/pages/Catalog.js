@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { useWishlist } from '../context/WishlistContext';
 import { products } from '../data/products';
 
 export default function Catalog() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
+  const { toggleWishlist, isInWishlist } = useWishlist();
+
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q !== null) {
+      setSearchQuery(q);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (window.lucide) {
@@ -67,7 +77,15 @@ export default function Catalog() {
                 type="text" 
                 placeholder="Search products..." 
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSearchQuery(value);
+                  if (value) {
+                    setSearchParams({ q: value });
+                  } else {
+                    setSearchParams({});
+                  }
+                }}
                 className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-full text-sm outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all"
               />
             </div>
@@ -97,7 +115,7 @@ export default function Catalog() {
             <h3 className="text-xl font-bold text-slate-900 mb-2">No products found</h3>
             <p className="text-slate-500">Try adjusting your filters or search query.</p>
             <button 
-              onClick={() => { setActiveCategory('All'); setSearchQuery(''); }}
+              onClick={() => { setActiveCategory('All'); setSearchQuery(''); setSearchParams({}); }}
               className="mt-6 px-6 py-2 bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition-colors"
             >
               Clear Filters
@@ -113,8 +131,18 @@ export default function Catalog() {
                       SALE
                     </span>
                   )}
-                  <button className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors z-10 shadow-sm" onClick={(e) => { e.preventDefault(); /* mock wishlist */ }}>
-                    <span><i data-lucide="heart" className="w-5 h-5"></i></span>
+                  <button 
+                    className={`absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center transition-colors z-10 shadow-sm ${
+                      isInWishlist(product.id) 
+                        ? 'text-rose-500 bg-rose-50' 
+                        : 'text-slate-400 hover:text-rose-500 hover:bg-rose-50'
+                    }`}
+                    onClick={(e) => { 
+                      e.preventDefault(); 
+                      toggleWishlist(product.id);
+                    }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill={isInWishlist(product.id) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
                   </button>
                   <img src={process.env.PUBLIC_URL + product.image} alt={product.name} className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-xl" />
                 </div>

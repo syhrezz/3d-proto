@@ -8,16 +8,20 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import Orders from './pages/Orders';
+import Wishlist from './pages/Wishlist';
+import Returns from './pages/Returns';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import { WishlistProvider } from './context/WishlistContext';
 import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <AuthProvider>
-      <CartProvider>
-        <Router>
-          <ScrollToTop />
+      <WishlistProvider>
+        <CartProvider>
+          <Router>
+            <ScrollToTop />
         <div className="App flex flex-col min-h-screen">
           <Navbar />
           <div className="flex-1">
@@ -29,11 +33,14 @@ function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/orders" element={<Orders />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/returns" element={<Returns />} />
             </Routes>
           </div>
         </div>
-      </Router>
-      </CartProvider>
+        </Router>
+        </CartProvider>
+      </WishlistProvider>
     </AuthProvider>
   );
 }

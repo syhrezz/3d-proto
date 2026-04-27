@@ -3,12 +3,14 @@ import { useParams, Link } from 'react-router-dom';
 import { products } from '../data/products';
 import ARViewer from '../components/ARViewer';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [qty, setQty] = useState(1);
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
@@ -124,6 +126,18 @@ export default function ProductDetail() {
             <button onClick={handleAddToCart} className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl flex items-center justify-center gap-2 shadow-lg transition-colors">
               <span><i data-lucide="shopping-bag" className="w-5 h-5"></i></span>
               Add to Cart
+            </button>
+            
+            <button 
+              onClick={() => toggleWishlist(product.id)}
+              className={`w-12 h-12 shrink-0 flex items-center justify-center rounded-xl border transition-colors shadow-sm ${
+                isInWishlist(product.id) 
+                  ? 'border-rose-200 bg-rose-50 text-rose-500' 
+                  : 'border-slate-200 bg-white text-slate-400 hover:border-rose-200 hover:text-rose-500 hover:bg-rose-50'
+              }`}
+              title="Toggle Wishlist"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill={isInWishlist(product.id) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
             </button>
           </div>
         </div>
