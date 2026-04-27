@@ -35,23 +35,23 @@ export default function Signup() {
   return (
     <div className="min-h-[calc(100vh-80px)] pt-24 pb-8 flex items-center justify-center bg-slate-50 px-4 md:px-6">
       <div className="max-w-4xl w-full bg-white rounded-[2rem] shadow-2xl shadow-slate-200 overflow-hidden flex flex-col md:flex-row min-h-[500px]">
-        
+
         {/* Left Side: Visual Content */}
         <div className="hidden md:flex md:w-[45%] relative bg-slate-900 overflow-hidden group">
           <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800/80 to-slate-900 z-10 transition-all duration-700"></div>
-          
-          <img 
-            src={process.env.PUBLIC_URL + '/lounger.png'} 
-            alt="Interior Design" 
+
+          <img
+            src={process.env.PUBLIC_URL + '/lounger.png'}
+            alt="Interior Design"
             className="absolute inset-0 w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000 opacity-60 mix-blend-overlay"
           />
-          
+
           <div className="relative z-20 flex flex-col justify-center px-10 h-full text-white">
             <Link to="/" className="flex items-center gap-2 mb-4 animate-fade-in opacity-80 hover:opacity-100 transition-opacity">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M19 10V4a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><path d="M3 13v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"/><path d="M3 10a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3Z"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M19 10V4a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6" /><path d="M3 13v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5" /><path d="M3 10a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3Z" /><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" /></svg>
               <span className="font-bold text-lg tracking-tight">Bizmate</span>
             </Link>
-            
+
             <h2 className="text-2xl lg:text-3xl font-bold mb-3 leading-tight">
               Create your <br /> <span className="text-emerald-400">dream</span> space.
             </h2>
@@ -66,12 +66,7 @@ export default function Signup() {
 
         {/* Right Side: Signup Form */}
         <div className="w-full md:w-[55%] p-6 lg:p-10 flex flex-col justify-center">
-          <div className="mb-4 block md:hidden">
-            <Link to="/" className="flex items-center gap-2 group">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-800"><path d="M19 10V4a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><path d="M3 13v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"/><path d="M3 10a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3Z"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/></svg>
-              <span className="font-bold text-lg tracking-tight text-slate-900">Bizmate</span>
-            </Link>
-          </div>
+
 
           <div className="mb-6 text-center md:text-left">
             <h1 className="text-2xl font-bold text-slate-900 mb-1">Create Account</h1>
@@ -82,9 +77,9 @@ export default function Signup() {
             <div className="space-y-1">
               <label className="text-[11px] font-bold text-slate-600 ml-1" htmlFor="name">Full Name</label>
               <div className="relative">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <input 
-                  type="text" 
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                <input
+                  type="text"
                   id="name"
                   required
                   placeholder="John Doe"
@@ -98,9 +93,9 @@ export default function Signup() {
             <div className="space-y-1">
               <label className="text-[11px] font-bold text-slate-600 ml-1" htmlFor="email">Email Address</label>
               <div className="relative">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8z"/><path d="m22 9-10 7L2 9"/></svg>
-                <input 
-                  type="email" 
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8z" /><path d="m22 9-10 7L2 9" /></svg>
+                <input
+                  type="email"
                   id="email"
                   required
                   placeholder="name@example.com"
@@ -115,9 +110,9 @@ export default function Signup() {
               <div className="space-y-1">
                 <label className="text-[11px] font-bold text-slate-600 ml-1" htmlFor="password">Password</label>
                 <div className="relative">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  <input 
-                    type="password" 
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                  <input
+                    type="password"
                     id="password"
                     required
                     placeholder="••••••••"
@@ -130,9 +125,9 @@ export default function Signup() {
               <div className="space-y-1">
                 <label className="text-[11px] font-bold text-slate-600 ml-1" htmlFor="confirmPassword">Confirm</label>
                 <div className="relative">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-                  <input 
-                    type="password" 
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="m9 12 2 2 4-4" /></svg>
+                  <input
+                    type="password"
                     id="confirmPassword"
                     required
                     placeholder="••••••••"
@@ -149,8 +144,8 @@ export default function Signup() {
               <label htmlFor="terms" className="text-[10px] text-slate-600 font-semibold cursor-pointer">Agree to Terms \u0026 Conditions</label>
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={loading}
               className={`w-full py-3 bg-slate-900 text-white font-bold rounded-xl shadow-lg shadow-slate-100 flex items-center justify-center gap-2 hover:bg-slate-800 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70 ${loading ? 'cursor-not-allowed' : ''}`}
             >
