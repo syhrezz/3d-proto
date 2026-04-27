@@ -37,7 +37,7 @@ export default function ProductDetail() {
       {/* Toast Notification */}
       <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 transition-all duration-300 z-50 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'}`}>
         <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
-          <i data-lucide="check" className="w-4 h-4 text-white stroke-[3]"></i>
+          <span><i data-lucide="check" className="w-4 h-4 text-white stroke-[3]"></i></span>
         </div>
         <span className="font-medium text-sm">Added to your cart</span>
         <Link to="/cart" className="ml-2 text-emerald-400 hover:text-emerald-300 text-sm font-bold transition-colors">View Cart</Link>
@@ -78,11 +78,11 @@ export default function ProductDetail() {
           <div className="flex items-center gap-4 md:gap-6 mb-6">
             <div className="flex items-center gap-1">
               <div className="flex text-amber-400">
-                <i data-lucide="star" className="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" className="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" className="w-4 h-4 fill-current"></i>
-                <i data-lucide="star" className="w-4 h-4 fill-current"></i>
-                <i data-lucide="star-half" className="w-4 h-4 fill-current"></i>
+                <span><i data-lucide="star" className="w-4 h-4 fill-current"></i></span>
+                <span><i data-lucide="star" className="w-4 h-4 fill-current"></i></span>
+                <span><i data-lucide="star" className="w-4 h-4 fill-current"></i></span>
+                <span><i data-lucide="star" className="w-4 h-4 fill-current"></i></span>
+                <span><i data-lucide="star-half" className="w-4 h-4 fill-current"></i></span>
               </div>
               <span className="text-sm font-medium text-slate-600 ml-1">4.9 (84 reviews)</span>
             </div>
@@ -116,13 +116,13 @@ export default function ProductDetail() {
           {/* Actions */}
           <div className="flex gap-4 mb-12">
             <div className="flex items-center border border-slate-200 rounded-xl bg-white shadow-sm">
-              <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-slate-900"><i data-lucide="minus" className="w-4 h-4"></i></button>
+              <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-slate-900"><span><i data-lucide="minus" className="w-4 h-4"></i></span></button>
               <span className="w-8 text-center font-semibold text-slate-900">{qty}</span>
-              <button onClick={() => setQty(Math.min(10, qty + 1))} className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-slate-900"><i data-lucide="plus" className="w-4 h-4"></i></button>
+              <button onClick={() => setQty(Math.min(10, qty + 1))} className="w-12 h-12 flex items-center justify-center text-slate-500 hover:text-slate-900"><span><i data-lucide="plus" className="w-4 h-4"></i></span></button>
             </div>
             
             <button onClick={handleAddToCart} className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl flex items-center justify-center gap-2 shadow-lg transition-colors">
-              <i data-lucide="shopping-bag" className="w-5 h-5"></i>
+              <span><i data-lucide="shopping-bag" className="w-5 h-5"></i></span>
               Add to Cart
             </button>
           </div>

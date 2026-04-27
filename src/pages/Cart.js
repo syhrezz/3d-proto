@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
@@ -6,6 +6,12 @@ export default function Cart() {
   const { cartItems, removeFromCart, updateQuantity, clearCart, cartTotal } = useCart();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
+
+  useEffect(() => {
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  }, [orderComplete, cartItems]);
 
   const handleCheckout = () => {
     setIsCheckingOut(true);
@@ -22,7 +28,7 @@ export default function Cart() {
       <div className="min-h-screen bg-slate-50 pt-32 pb-20 px-6 flex items-center justify-center">
         <div className="max-w-md w-full bg-white rounded-3xl p-8 text-center shadow-sm border border-slate-100">
           <div className="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
-            <i data-lucide="check" className="w-10 h-10 stroke-[3]"></i>
+            <span><i data-lucide="check" className="w-10 h-10 stroke-[3]"></i></span>
           </div>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Order Confirmed!</h2>
           <p className="text-slate-500 mb-8">Thank you for shopping with Bizmate. Your premium furniture is being prepared for delivery.</p>
@@ -42,7 +48,7 @@ export default function Cart() {
         {cartItems.length === 0 ? (
           <div className="bg-white rounded-3xl p-12 text-center shadow-sm border border-slate-100">
             <div className="w-24 h-24 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-6">
-              <i data-lucide="shopping-bag" className="w-12 h-12"></i>
+              <span><i data-lucide="shopping-bag" className="w-12 h-12"></i></span>
             </div>
             <h2 className="text-xl font-bold text-slate-900 mb-2">Your cart is empty</h2>
             <p className="text-slate-500 mb-8">Looks like you haven't added any furniture to your cart yet.</p>
@@ -74,14 +80,14 @@ export default function Cart() {
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
                           className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors"
                         >
-                          <i data-lucide="minus" className="w-4 h-4"></i>
+                          <span><i data-lucide="minus" className="w-4 h-4"></i></span>
                         </button>
                         <span className="w-8 text-center font-semibold text-slate-900">{item.quantity}</span>
                         <button 
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
                           className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors"
                         >
-                          <i data-lucide="plus" className="w-4 h-4"></i>
+                          <span><i data-lucide="plus" className="w-4 h-4"></i></span>
                         </button>
                       </div>
                       
@@ -89,7 +95,7 @@ export default function Cart() {
                         onClick={() => removeFromCart(item.id)}
                         className="text-sm font-medium text-rose-500 hover:text-rose-600 transition-colors flex items-center gap-1.5"
                       >
-                        <i data-lucide="trash-2" className="w-4 h-4"></i>
+                        <span><i data-lucide="trash-2" className="w-4 h-4"></i></span>
                         <span>Remove</span>
                       </button>
                     </div>
@@ -133,7 +139,7 @@ export default function Cart() {
                 >
                   {isCheckingOut ? (
                     <>
-                      <i data-lucide="loader-2" className="w-5 h-5 animate-spin"></i>
+                      <span><i data-lucide="loader-2" className="w-5 h-5 animate-spin"></i></span>
                       Processing...
                     </>
                   ) : (
@@ -142,7 +148,7 @@ export default function Cart() {
                 </button>
                 
                 <div className="mt-6 flex items-center justify-center gap-2 text-xs text-slate-400">
-                  <i data-lucide="shield-check" className="w-4 h-4"></i>
+                  <span><i data-lucide="shield-check" className="w-4 h-4"></i></span>
                   <span>Secure 256-bit SSL encryption</span>
                 </div>
               </div>
